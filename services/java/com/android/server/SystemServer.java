@@ -2194,6 +2194,16 @@ public final class SystemServer implements Dumpable {
             }
             t.traceEnd();
 
+            if (mPackageManager.hasSystemFeature(PackageManager.FEATURE_ROCKCHIP_DISPLAY)) {
+                Slog.i(TAG, "addService drm_device_management");
+                try {
+                    ServiceManager.addService("drm_device_management",
+                            new RkDisplayDeviceManagementService(context));
+                } catch (Throwable e) {
+                    Slog.e(TAG, "Failure starting RkDisplayDeviceManagementService", e);
+                }
+            }
+
             t.traceBegin("StartNotificationManager");
             mSystemServiceManager.startService(NotificationManagerService.class);
             SystemNotificationChannels.removeDeprecated(context);
