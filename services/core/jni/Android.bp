@@ -75,6 +75,7 @@ cc_library_static {
         "com_android_server_pm_PackageManagerShellCommandDataLoader.cpp",
         "com_android_server_sensor_SensorService.cpp",
         "com_android_server_wm_TaskFpsCallbackController.cpp",
+        "com_android_server_rkdisplay_RkDisplayModes.cpp",
         "onload.cpp",
         ":lib_cachedAppOptimizer_native",
         ":lib_freezer_native",
@@ -90,10 +91,13 @@ cc_library_static {
         "frameworks/native/libs/ui/include",
         "system/gatekeeper/include",
         "system/memory/libmeminfo/include",
+        "vendor/rockchip/hardware/interfaces",
+        "hardware/rockchip/libhardware_rockchip/include/",
     ],
 
     header_libs: [
         "bionic_libc_platform_headers",
+        "libhardware_rockchip_headers",
     ],
 
     product_variables: {
@@ -214,6 +218,7 @@ cc_defaults {
         "android.system.suspend.control.internal-cpp",
         "android.system.suspend-V1-ndk",
         "server_configurable_flags",
+        "rockchip.hardware.outputmanager@1.0",
         "service.incremental",
     ],
 
