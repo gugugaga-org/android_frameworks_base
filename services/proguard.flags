@@ -70,6 +70,12 @@
 -keepclassmembers class com.android.server.** {
   native <methods>;
 }
+# libandroid_servers resolves these nested result classes and fields by name
+# during register_com_android_server_rkdisplay_RkDisplayModes().
+-keep,allowoptimization,allowaccessmodification class com.android.server.rkdisplay.RkDisplayModes { *; }
+-keep,allowoptimization,allowaccessmodification class com.android.server.rkdisplay.RkDisplayModes$RkPhysicalDisplayInfo { *; }
+-keep,allowoptimization,allowaccessmodification class com.android.server.rkdisplay.RkDisplayModes$RkColorCapacityInfo { *; }
+-keep,allowoptimization,allowaccessmodification class com.android.server.rkdisplay.RkDisplayModes$RkConnectorInfo { *; }
 # TODO(b/210510433): Revisit and fix with @Keep, or consider auto-generating from
 # frameworks/base/services/core/jni/onload.cpp.
 -keep,allowoptimization,allowaccessmodification class com.android.server.broadcastradio.hal1.BroadcastRadioService { *; }

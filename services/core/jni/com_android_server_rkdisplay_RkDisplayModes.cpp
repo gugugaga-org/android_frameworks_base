@@ -107,59 +107,52 @@ static void nativeSetMode(JNIEnv* env, jobject obj, jint dpy, jint iface_type, j
 
 static int nativeSetHue(JNIEnv* env, jobject obj, jint dpy, jint degree)
 {
-    Result ret = Result::UNKNOWN;
     if (mComposer != nullptr)
-        ret = mComposer->setHue(dpy, degree);
+        mComposer->setHue(dpy, degree);
     return 0;
 }
 
 static int nativeSetSaturation(JNIEnv* env, jobject obj, jint dpy, jint saturation)
 {
-    Result ret = Result::UNKNOWN;
     if (mComposer != nullptr)
-        ret = mComposer->setSaturation(dpy, saturation);
+        mComposer->setSaturation(dpy, saturation);
     return 0;
 }
 
 static int nativeSetContrast(JNIEnv* env, jobject obj, jint dpy, jint contrast)
 {
-    Result ret = Result::UNKNOWN;
     if (mComposer != nullptr)
-        ret = mComposer->setContrast(dpy, contrast);
+        mComposer->setContrast(dpy, contrast);
     return 0;
 }
 
 static int nativeSetBrightness(JNIEnv* env, jobject obj, jint dpy, jint brightness)
 {
-    Result ret = Result::UNKNOWN;
     if (mComposer != nullptr)
-        ret = mComposer->setBrightness(dpy, brightness);
+        mComposer->setBrightness(dpy, brightness);
     return 0;
 }
 
 static int nativeSetScreenScale(JNIEnv* env, jobject obj, jint dpy, jint direction, jint value)
 {
-    Result ret = Result::UNKNOWN;
     if (mComposer != nullptr)
-        ret = mComposer->setScreenScale(dpy, direction, value);
+        mComposer->setScreenScale(dpy, direction, value);
     return 0;
 }
 
 static int nativeSetHdrMode(JNIEnv* env, jobject obj, jint dpy, jint hdrMode)
 {
-    Result ret = Result::UNKNOWN;
     if (mComposer != nullptr)
-        ret = mComposer->setHdrMode(dpy, hdrMode);
+        mComposer->setHdrMode(dpy, hdrMode);
     return 0;
 }
 
 static int nativeSetColorMode(JNIEnv* env, jobject obj, jint dpy, jstring mode)
 {
     const char* mMode = env->GetStringUTFChars(mode, NULL);
-    Result ret = Result::UNKNOWN;
 
     if (mComposer != nullptr)
-        ret = mComposer->setColorMode(dpy, mMode);
+        mComposer->setColorMode(dpy, mMode);
     env->ReleaseStringUTFChars(mode, mMode);
     return 0;
 }
@@ -651,6 +644,7 @@ int register_com_android_server_rkdisplay_RkDisplayModes(JNIEnv* env)
 
     jclass clazz;
     FIND_CLASS(clazz, "com/android/server/rkdisplay/RkDisplayModes");
+    (void)clazz;
 
     FIND_CLASS(gRkPhysicalDisplayInfoClassInfo.clazz, "com/android/server/rkdisplay/RkDisplayModes$RkPhysicalDisplayInfo");
     gRkPhysicalDisplayInfoClassInfo.clazz = jclass(env->NewGlobalRef(gRkPhysicalDisplayInfoClassInfo.clazz));
