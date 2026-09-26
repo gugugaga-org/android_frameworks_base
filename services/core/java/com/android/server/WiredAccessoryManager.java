@@ -25,7 +25,10 @@ import static com.android.server.input.InputManagerService.SW_VIDEOOUT_INSERT_BI
 import static com.android.server.input.InputManagerService.SW_MICROPHONE_INSERT;
 import static com.android.server.input.InputManagerService.SW_MICROPHONE_INSERT_BIT;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -98,6 +101,7 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
 
     private final WakeLock mWakeLock;  // held while there is a pending route change
     private final AudioManager mAudioManager;
+    private final Context mContext;
 
     private int mHeadsetState;
     private int mDpCount;
@@ -109,7 +113,23 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
 
     private final boolean mUseDevInputEventForAudioJack;
 
+    private final BroadcastReceiver mHdmiPlugReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final boolean plugged = intent.getBooleanExtra("state", false);
+            synchronized (mLock) {
+                final int newState = plugged
+                        ? mHeadsetState | BIT_HDMI_AUDIO
+                        : mHeadsetState & ~BIT_HDMI_AUDIO;
+                Slog.i(TAG, "HDMI audio fallback from display plug broadcast: connected="
+                        + plugged);
+                updateLocked(NAME_H2W, "", newState, false /* isSynchronous */);
+            }
+        }
+    };
+
     public WiredAccessoryManager(Context context, InputManagerService inputManager) {
+        mContext = context;
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WiredAccessoryManager");
         mWakeLock.setReferenceCounted(false);
@@ -167,6 +187,12 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
             mExtconObserver.init();
         } else {
             mObserver.init();
+        }
+
+        if (!mObserver.hasHdmiAudioSwitch()) {
+            IntentFilter hdmiFilter = new IntentFilter("android.intent.action.HDMI_PLUGGED");
+            mContext.registerReceiver(mHdmiPlugReceiver, hdmiFilter,
+                    Context.RECEIVER_NOT_EXPORTED);
         }
     }
 
@@ -488,6 +514,16 @@ final class WiredAccessoryManager implements WiredAccessoryCallbacks {
                 startObserving("DEVPATH=" + uei.getDevPath());
                 mDevPath.add(devPath);
             }
+        }
+
+        boolean hasHdmiAudioSwitch() {
+            for (UEventInfo uei : mUEventInfo) {
+                if (NAME_HDMI_AUDIO.equals(uei.getDevName())
+                        || NAME_HDMI.equals(uei.getDevName())) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private List<UEventInfo> makeObservedUEventList() {
